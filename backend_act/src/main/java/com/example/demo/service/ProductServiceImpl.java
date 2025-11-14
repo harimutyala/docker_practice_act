@@ -1,0 +1,53 @@
+package com.example.demo.service;
+
+import com.example.demo.model.Product;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.service.ProductService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductServiceImpl implements ProductService {
+
+    private final ProductRepository repository;
+
+    public ProductServiceImpl(ProductRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public Product addProduct(Product product) {
+        return repository.save(product);
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Product getProductById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Product updateProduct(Long id, Product newProduct) {
+        Product existing = repository.findById(id).orElse(null);
+
+        if (existing != null) {
+            existing.setName(newProduct.getName());
+            existing.setPrice(newProduct.getPrice());
+            existing.setQuantity(newProduct.getQuantity());
+            existing.setDescription(newProduct.getDescription());
+            return repository.save(existing);
+        }
+        return null;
+    }
+
+    @Override
+    public String deleteProduct(Long id) {
+        repository.deleteById(id);
+        return "Product deleted successfully!";
+    }
+}
